@@ -16,7 +16,7 @@ window.onload = function()
             }
         },
         backgroundColor: '#9FFB98',
-        scene:[PlayGame]
+        scene:[HomeGame, PlayGame, EndGame]
     };
     game = new Phaser.Game(gameConfig);
 

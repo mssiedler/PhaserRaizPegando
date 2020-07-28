@@ -16,6 +16,8 @@ class PlayGame extends Phaser.Scene
 
 
         this.estrela;
+        this.music;
+        this.som;
 
         
     }
@@ -23,14 +25,19 @@ class PlayGame extends Phaser.Scene
     preload()
     {
        
-        this.load.image("star", "assets/star.png");
-        this.load.image("rock", "assets/rocha.png");
-        this.load.spritesheet("personagem", "assets/dude.png", {frameWidth:32, frameHeight:48})
-    }
+     }
 
     create()
     {
-        var chao = this.add.rectangle(0,500,800,30,0xFF8C00).setOrigin(0,0);
+        this.add.image(0,0,"fundo").setOrigin(0,0);
+
+        this.music = this.sound.add("musica");
+        this.music.play();
+
+        this.som = this.sound.add("som");
+
+        var chao = this.add.image(2,500,"chao").setOrigin(0,0);
+        
         this.physics.add.existing(chao);
 
         this.physics.world.on("worldbounds", this.saiudaCena);
@@ -58,7 +65,22 @@ class PlayGame extends Phaser.Scene
 
         this.inimigos.children.iterate(this.configuracaoFilho);
 
-        this.personagem = this.physics.add.image(320,470,'personagem',4);
+        this.personagem = this.physics.add.sprite(320,470,'personagem',4);
+
+        //Animações
+        this.anims.create({
+            key: "esquerda",
+            frames: this.anims.generateFrameNumbers("personagem", {start:0,end:3}),
+            frameRate: 10,
+            repeat:-1
+        });
+
+        this.anims.create({
+            key: "direita",
+            frames: this.anims.generateFrameNumbers("personagem", {start:5,end:8}),
+            frameRate: 10,
+            repeat:-1
+        });
 
         this.input.keyboard.on("keydown_LEFT", ()=> this.teclado('ESQUERDA'));
         this.input.keyboard.on("keydown_RIGHT", ()=> this.teclado('DIREITA'));
@@ -87,9 +109,11 @@ class PlayGame extends Phaser.Scene
         switch (tecla) {
             case 'ESQUERDA':
                 this.personagem.setVelocityX(this.passos*-1);
+                this.personagem.play("esquerda");
                 break;
             case 'DIREITA':
                 this.personagem.setVelocityX(this.passos);
+                this.personagem.play("direita");
                 break;
             case 'BAIXO':
                 this.personagem.setVelocityX(0);
@@ -115,13 +139,15 @@ class PlayGame extends Phaser.Scene
         item.disableBody(true,true);
         switch (item.texture.key) {
             case "star":
+                this.som.play();
                 this.pontos++;
                 this.txtPontos.text = this.pontos;
                 if(this.pontos==10)
                 {
-                    this.add.text(200,150, "Parabéns você venceu\nTecle ESPAÇO para jogar novamente",
-                    {fontSize:'22px', fill:'orange', backgroundColor:'black'});
-                    personagem.disableBody(true,true);
+                    this.music.pause();
+                    //acesso a cena e atribuo um valor a uma variável
+                    game.scene.keys["EndGame"].mensagem = "Você Venceu!!!";
+                    this.scene.start("EndGame");
 
                 }
                 break;
@@ -130,9 +156,9 @@ class PlayGame extends Phaser.Scene
                 this.txtVidas.text = this.vidas;
                 if(this.vidas==0)
                 {
-                    this.add.text(200,150, "Você Perdeu\nTecle ESPAÇO para tentar novamente",
-                    {fontSize:'22px', fill:'orange', backgroundColor:'black'});
-                    personagem.disableBody(true,true);
+                    this.music.pause();
+                    game.scene.keys["EndGame"].mensagem = "Você Perdeu!!!";
+                    this.scene.start("EndGame");
 
                 }
                 break;
