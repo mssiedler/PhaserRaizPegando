@@ -12,6 +12,8 @@ class EndGame extends Phaser.Scene
     create()
     {
         
+        game.scene.keys["PlayGame"].fase=1;
+
         this.add.image(0,0,"fundo").setOrigin(0,0);
         this.add.text(150,50,this.mensagem, {fontSize:'32px', fill:'purple'});
         let btnPlay = this.add.image(135,100,"btnPlay").setOrigin(0,0);

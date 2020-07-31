@@ -19,6 +19,12 @@ class PlayGame extends Phaser.Scene
         this.music;
         this.som;
 
+        this.fase=1;   
+        
+        //Tempo
+        this.txtTempo;
+        this.tempo;
+        this.maximoTempo=60;
         
     }
 
@@ -53,7 +59,9 @@ class PlayGame extends Phaser.Scene
             
         });
 
-        this.premios.children.iterate(this.configuracaoFilho);
+        this.premios.children.iterate(function(elemento){
+            this.configuracaoFilho(elemento);
+        }, this);
        
         this.inimigos = this.physics.add.group({
             key:'rock',
@@ -63,7 +71,9 @@ class PlayGame extends Phaser.Scene
             
         });
 
-        this.inimigos.children.iterate(this.configuracaoFilho);
+        this.inimigos.children.iterate(function(elemento){
+            this.configuracaoFilho(elemento);
+        }, this);
 
         this.personagem = this.physics.add.sprite(320,470,'personagem',4);
 
@@ -102,6 +112,8 @@ class PlayGame extends Phaser.Scene
 
         this.vidas = 2;
         this.txtVidas = this.add.text(690, chao.y+60, this.vidas, {fontSize:'16px', fill:'red'})
+    
+  
     }
 
     teclado(tecla)
@@ -142,7 +154,49 @@ class PlayGame extends Phaser.Scene
                 this.som.play();
                 this.pontos++;
                 this.txtPontos.text = this.pontos;
-                if(this.pontos==10)
+                if(this.pontos>=10)
+                {
+                    if(this.fase==1 || this.fase==2)
+                    {
+                        this.fase++;
+                        this.scene.restart();
+                    }
+                    else{
+                    
+                        this.music.pause();
+                        //acesso a cena e atribuo um valor a uma variável
+                        game.scene.keys["EndGame"].mensagem = "Você Venceu!!!";
+                        this.scene.start("EndGame");
+                    }
+
+                }
+                break;
+            case "starVermelha":
+                    this.som.play();
+                    this.pontos=this.pontos+2;
+                    this.txtPontos.text = this.pontos;
+                    if(this.pontos>=10)
+                    {
+                        if(this.fase==2)
+                        {
+                            this.fase++;
+                            this.scene.restart();
+                        }
+                        else{
+                        
+                            this.music.pause();
+                            //acesso a cena e atribuo um valor a uma variável
+                            game.scene.keys["EndGame"].mensagem = "Você Venceu!!!";
+                            this.scene.start("EndGame");
+                        }
+    
+                    }
+                    break;
+            case "starCinza":
+                this.som.play();
+                this.pontos=this.pontos+3;
+                this.txtPontos.text = this.pontos;
+                if(this.pontos>=10)
                 {
                     this.music.pause();
                     //acesso a cena e atribuo um valor a uma variável
@@ -164,12 +218,67 @@ class PlayGame extends Phaser.Scene
                 break;
             
             default:
+                this.vidas=0;
+                this.music.pause();
+                game.scene.keys["EndGame"].mensagem = "Você Perdeu!!!";
+                this.scene.start("EndGame");
                 break;
         }
         
     }
 
     configuracaoFilho(elemento){
+        if(this.fase==2)
+        {
+            let aleatorio;
+            if(elemento.texture.key=="star")
+            {
+                aleatorio = Phaser.Math.Between(1,4);
+                if(aleatorio==1)
+                {
+                    elemento.setTexture("starVermelha");
+                }
+            }
+            else
+            {
+                aleatorio = Phaser.Math.Between(1,4);
+                if(aleatorio==1)
+                {
+                    elemento.setTexture("et1");
+                }
+            }
+
+        }
+        
+        else if(this.fase==3)
+        {
+            let aleatorio;
+            if(elemento.texture.key=="star")
+            {
+                aleatorio = Phaser.Math.Between(1,4);
+                if(aleatorio==1)
+                {
+                    elemento.setTexture("starVermelha");
+                }
+                else if(aleatorio==2)
+                {
+                    elemento.setTexture("starCinza");
+                }
+            }
+            else
+            {
+                aleatorio = Phaser.Math.Between(1,4);
+                if(aleatorio==1)
+                {
+                    elemento.setTexture("et1");
+                }
+                else if(aleatorio==2)
+                {
+                    elemento.setTexture("et2");
+                }
+            }
+
+        }
         elemento.body.onWorldBounds = true;
         elemento.x = Phaser.Math.Between(0,800);
         elemento.y = Phaser.Math.Between(0,70);

@@ -14,8 +14,13 @@ class HomeGame extends Phaser.Scene
 
         //PlayGame
         this.load.image("star", "assets/star.png");
+        this.load.image("starVermelha", "assets/starVermelha.png");
+        this.load.image("starCinza", "assets/starCinza.png");
         this.load.image("chao", "assets/chao2.png");
         this.load.image("rock", "assets/rocha.png");
+        this.load.image("et1", "assets/inimigo.png");
+        this.load.image("et2", "assets/inimigoCobra.png");
+
         this.load.spritesheet("personagem", "assets/dude.png", {frameWidth:32, frameHeight:48})
 
         this.load.audio("musica", "assets/music.mp3");
