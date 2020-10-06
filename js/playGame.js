@@ -21,10 +21,10 @@ class PlayGame extends Phaser.Scene
 
         this.fase=1;   
         
-        //Tempo
+        this.tempo=90;
         this.txtTempo;
-        this.tempo;
-        this.maximoTempo=60;
+        this.contador;
+        
         
     }
 
@@ -110,9 +110,13 @@ class PlayGame extends Phaser.Scene
         this.pontos = 0;
         this.txtPontos = this.add.text(100,chao.y+60, this.pontos, {fontSize:'16px', fill:'blue'});
 
-        this.vidas = 2;
+        this.vidas = 5;
         this.txtVidas = this.add.text(690, chao.y+60, this.vidas, {fontSize:'16px', fill:'red'})
     
+        this.txtTempo = this.add.text(345, chao.y+60, this.tempo, {fontSize:'25px', fill:'black'})
+        this.contador = this.time.addEvent({delay:1000,repeat: this.tempo});
+
+        
   
     }
 
@@ -143,7 +147,8 @@ class PlayGame extends Phaser.Scene
 
     update()
     {
-        
+        this.txtTempo.text = this.contador.repeatCount;
+        this.tempo = this.contador.repeatCount;
     }
 
     pegou(personagem, item)
@@ -154,7 +159,7 @@ class PlayGame extends Phaser.Scene
                 this.som.play();
                 this.pontos++;
                 this.txtPontos.text = this.pontos;
-                if(this.pontos>=10)
+                if(this.pontos>=1)
                 {
                     if(this.fase==1 || this.fase==2)
                     {
@@ -175,7 +180,7 @@ class PlayGame extends Phaser.Scene
                     this.som.play();
                     this.pontos=this.pontos+2;
                     this.txtPontos.text = this.pontos;
-                    if(this.pontos>=10)
+                    if(this.pontos>=1)
                     {
                         if(this.fase==2)
                         {
@@ -196,7 +201,7 @@ class PlayGame extends Phaser.Scene
                 this.som.play();
                 this.pontos=this.pontos+3;
                 this.txtPontos.text = this.pontos;
-                if(this.pontos>=10)
+                if(this.pontos>=1)
                 {
                     this.music.pause();
                     //acesso a cena e atribuo um valor a uma variável
@@ -215,6 +220,26 @@ class PlayGame extends Phaser.Scene
                     this.scene.start("EndGame");
 
                 }
+                break;
+            case "et1":
+                this.vidas=this.vidas-2;
+                this.txtVidas.text = this.vidas;
+                if(this.vidas==0)
+                {
+                    this.music.pause();
+                    game.scene.keys["EndGame"].mensagem = "Você Perdeu!!!";
+                    this.scene.start("EndGame");
+
+                }
+                break;
+            case "et2":
+                this.vidas=0;
+                this.txtVidas.text = this.vidas;
+                this.music.pause();
+                game.scene.keys["EndGame"].mensagem = "Você Perdeu!!!";
+                this.scene.start("EndGame");
+
+                
                 break;
             
             default:
